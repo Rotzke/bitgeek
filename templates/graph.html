@@ -51,11 +51,12 @@
     <div class="col-md-4">
         <form class="form" role="form" method="POST" data-toggle="validator">
             <div class="form-group has-feedback">
-                <div class='input-group date' id='datetimepicker12'>
-                    <input type='text' class="form-control" placeholder="Formatted end date" name="to" required pattern="^\d{2}\/\d{2}\/\d{4} \d{1,2}:\d{2} (AM|PM)$" maxlength="19" data-error="Please stick to the date format!" value='{{ tovalue }}'/>
+                <div class='input-group date' id='datetimepicker_to'>
+                    <input type='text' class="form-control" name='to'placeholder="Formatted start date" required pattern="^\d{2}\/\d{2}\/\d{4} \d{1,2}:\d{2} (AM|PM)$" maxlength="19" data-error="Please stick to the date format!"/>
                     <span class="input-group-addon">
-                                <span class="glyphicon glyphicon-calendar"></span>
+                        <span class="glyphicon glyphicon-calendar">
                     </span>
+                </span>
                 </div>
             </div>
             <div class="form-group has-feedback">
@@ -92,7 +93,13 @@
             </div>
             <div class="form-group has-feedback">
                 <div class='input-group' id='interval'>
-                    <input type='text' class="form-control" placeholder="Interval param" name="interval" required pattern="^\d+$" data-error="Numbers only!" value="1" />
+                    <select class="form-control" id="selector" name='interval'>
+                        <option value='1'>1 minute</option>
+                        <option value='5'>5 minutes</option>
+                        <option value='10'>10 minutes</option>
+                        <option value='30'>30 minutes</option>
+                        <option value='60'>60 minutes</option>
+                    </select>
                     <span class="input-group-addon">
                                 Interval
                     </span>
@@ -102,11 +109,10 @@
         </form>
         <script type="text/javascript">
         $(function () {
-        $('#datetimepicker12').datetimepicker({
-            inline: true,
-            sideBySide: true
+            $('#datetimepicker_to').datetimepicker({
+                defaultDate: new Date()
+            });
         });
-    });
         </script>
     </div>
     <div class="col-md-4">
