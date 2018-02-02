@@ -120,7 +120,6 @@ def graph():
             return render_template('graph.html',
                                    name=session['username'],
                                    data=result,
-                                   fromvalue=request.form['from'],
                                    tovalue=request.form['to'],
                                    coinvalue=request.form['coin'],
                                    prices=[float(i['price'])
@@ -157,7 +156,8 @@ def graph():
                                    signallines=[float(i['signal_line'])
                                                 for i in result
                                                 ][::-1
-                                                  ][::interval])
+                                                  ][::interval],
+                                   bearbull=int(result[0]['macd_hist']))
         else:
             flash('No results found!', category='warning')
     return render_template('graph.html', name=session['username'])
