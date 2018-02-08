@@ -46,12 +46,12 @@ def datacenter_report(interval, todate, coin, fast, slow, signal, fromdate):
     """Generate report and CSV file for datacenter endpoint."""
     result = []
     if coin:
-        path = [timing(fromdate), timing(todate), coin]
+        path = [timing(fromdate), timing(todate), coin, str(interval)]
         filepath = '-'.join(path).replace(':', '-')
         [result.append(i) for i in summarize(
             interval, todate, coin, fast, slow, signal, fromdate)]
     else:
-        path = [timing(fromdate), timing(todate), 'ALL']
+        path = [timing(fromdate), timing(todate), 'ALL', str(interval)]
         filepath = '-'.join(path).replace(':', '-')
         for c in coins_list:
             try:
@@ -62,7 +62,8 @@ def datacenter_report(interval, todate, coin, fast, slow, signal, fromdate):
     if not result:
         return False
     with open('archive/{}.csv'.format(filepath), 'w') as dump:
-        fieldnames = ['pair', 'interval', 'datetime', 'volume',
+        fieldnames = ['pair', 'interval', 'datetime', 'date',
+                      'time', 'volume',
                       'price', 'ema_fast', 'ema_slow', 'macd',
                       'signal_line', 'macd_hist']
         writer = csv.DictWriter(
@@ -251,6 +252,8 @@ def summarize(interval, todate, coin, fast, slow, signal, fromdate=False):
             data['pair'] = coin
             data['interval'] = '{}-Minute'.format(interval)
             data['datetime'] = m['datetime']
+            data['date'] = m['datetime'].split('T')[0]
+            data['time'] = m['datetime'].split('T')[1]
             data['price'] = Decimal(m['price'])
             data['volume'] = Decimal(m['sum_quantity'])
             data['ema_fast'] = alphafast * Decimal(data['price'])
