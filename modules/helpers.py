@@ -45,7 +45,7 @@ def get_report():
 def datacenter_report(interval, todate, coin, fast, slow, signal, fromdate):
     """Generate report and CSV file for datacenter endpoint."""
     path = [timing(fromdate), timing(todate), coin]
-    filepath = '-'.join(path)
+    filepath = '-'.join(path).replace(':', '-')
     result = summarize(interval, todate, coin, fast, slow, signal, fromdate)
     if not result:
         return False
@@ -213,6 +213,7 @@ def summarize(interval, todate, coin, fast, slow, signal, fromdate=False):
                               'price': price,
                               'sum_quantity': 0})
             b.append(i.copy())
+        summarized = None
         if not fromdate:
             generator = b[::-1][:interval * 67][::interval]
             summarized = generator[:40]
@@ -224,6 +225,7 @@ def summarize(interval, todate, coin, fast, slow, signal, fromdate=False):
                 / Decimal(len(generator[41:53]))
         else:
             generator = b[::interval][::-1]
+            summarized = generator
         alphafast = Decimal(2.0 / (1.0 + float(fast)))
         alphaslow = Decimal(2.0 / (1.0 + float(slow)))
         alphasignal = Decimal(2.0 / (1.0 + float(signal)))
@@ -236,7 +238,7 @@ def summarize(interval, todate, coin, fast, slow, signal, fromdate=False):
         for m in summarized:
             data = {}
             data['pair'] = coin
-            data['interval'] = '{}-Minutes'.format(interval)
+            data['interval'] = '{}-Minute'.format(interval)
             data['datetime'] = m['datetime']
             data['price'] = Decimal(m['price'])
             data['volume'] = Decimal(m['sum_quantity'])

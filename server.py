@@ -8,7 +8,7 @@ from flask import (Flask, current_app, flash, redirect, render_template,
 from flask_pymongo import PyMongo
 from modules.bittrex import fetch
 from modules.forms import LoginForm
-from modules.helpers import get_report, summarize, utcdate
+from modules.helpers import datacenter_report, get_report, summarize, utcdate
 from werkzeug.security import check_password_hash
 
 app = Flask(__name__)
@@ -107,13 +107,14 @@ def report():
 def datacenter():
     """Show the datacenter page."""
     if request.method == 'POST':
-        result = summarize(int(request.form.get('interval')),
-                           request.form['to'],
-                           request.form['coin'],
-                           request.form['fast'],
-                           request.form['slow'],
-                           request.form['signal'],
-                           fromdate=request.form['from'])
+        result =\
+            datacenter_report(int(request.form.get('interval')),
+                              request.form['to'],
+                              request.form['coin'],
+                              request.form['fast'],
+                              request.form['slow'],
+                              request.form['signal'],
+                              request.form['from'])
         if result:
             flash('Found {} results!'.format(
                 len(result[1])), category='success')
@@ -182,4 +183,4 @@ def graph():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
