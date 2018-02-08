@@ -102,6 +102,30 @@ def report():
     return render_template('report.html', name=session['username'])
 
 
+@app.route('/datacenter', methods=['GET', 'POST'])
+@login_required
+def datacenter():
+    """Show the datacenter page."""
+    if request.method == 'POST':
+        result = summarize(int(request.form.get('interval')),
+                           request.form['to'],
+                           request.form['coin'],
+                           request.form['fast'],
+                           request.form['slow'],
+                           request.form['signal'],
+                           fromdate=request.form['from'])
+        if result:
+            flash('Found {} results!'.format(
+                len(result[1])), category='success')
+            return render_template('datacenter.html',
+                                   name=session['username'],
+                                   download=result[0],
+                                   data=result[1][:100])
+        else:
+            flash('No results found!', category='warning')
+    return render_template('datacenter.html', name=session['username'])
+
+
 @app.route('/graph', methods=['GET', 'POST'])
 @login_required
 def graph():
