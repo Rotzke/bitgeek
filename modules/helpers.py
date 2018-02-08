@@ -44,23 +44,11 @@ def get_report():
 
 def datacenter_report(interval, todate, coin, fast, slow, signal, fromdate):
     """Generate report and CSV file for datacenter endpoint."""
-    result = []
     if coin:
         path = [timing(fromdate), timing(todate), coin, str(interval)]
-        filepath = '-'.join(path).replace(':', '-')
-        [result.append(i) for i in summarize(
-            interval, todate, coin, fast, slow, signal, fromdate)]
     else:
         path = [timing(fromdate), timing(todate), 'ALL', str(interval)]
-        filepath = '-'.join(path).replace(':', '-')
-        for c in coins_list:
-            try:
-                [result.append(i) for i in summarize(
-                    interval, todate, c, fast, slow, signal, fromdate)]
-            except:
-                pass
-    if not result:
-        return False
+    filepath = '-'.join(path).replace(':', '-')
     with open('archive/{}.csv'.format(filepath), 'w') as dump:
         fieldnames = ['pair', 'interval', 'datetime', 'date',
                       'time', 'volume',
@@ -69,8 +57,17 @@ def datacenter_report(interval, todate, coin, fast, slow, signal, fromdate):
         writer = csv.DictWriter(
             dump, fieldnames=fieldnames, extrasaction='ignore')
         writer.writeheader()
-        writer.writerows(result)
-    return (filepath, result)
+        if coin:
+            [writer.writerow(i) for i in summarize(
+                interval, todate, coin, fast, slow, signal, fromdate)]
+        else:
+            for c in coins_list:
+                try:
+                    [writer.writerow(i) for i in summarize(
+                        interval, todate, c, fast, slow, signal, fromdate)]
+                except:
+                    pass
+    return filepath
 
 
 def summarize(interval, todate, coin, fast, slow, signal, fromdate=False):
