@@ -44,12 +44,23 @@ def get_report():
 
 def datacenter_report(interval, todate, coin, fast, slow, signal, fromdate):
     """Generate report and CSV file for datacenter endpoint."""
-    path = [timing(fromdate), timing(todate), coin]
-    filepath = '-'.join(path).replace(':', '-')
-    result = summarize(interval, todate, coin, fast, slow, signal, fromdate)
+    result = []
+    if coin:
+        path = [timing(fromdate), timing(todate), coin]
+        filepath = '-'.join(path).replace(':', '-')
+        [result.append(i) for i in summarize(
+            interval, todate, coin, fast, slow, signal, fromdate)]
+    else:
+        path = [timing(fromdate), timing(todate), 'ALL']
+        filepath = '-'.join(path).replace(':', '-')
+        for c in coins_list:
+            try:
+                [result.append(i) for i in summarize(
+                    interval, todate, c, fast, slow, signal, fromdate)]
+            except:
+                pass
     if not result:
         return False
-    filepath = '-'.join(path)
     with open('archive/{}.csv'.format(filepath), 'w') as dump:
         fieldnames = ['pair', 'interval', 'datetime', 'volume',
                       'price', 'ema_fast', 'ema_slow', 'macd',
